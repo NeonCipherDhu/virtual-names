@@ -1,0 +1,97 @@
+{
+  "name": "virtual-names",
+  "version": "1.0.0",
+  "description": "Native Windows Privacy Persona & Demographic Identity Generator for Untrusted Websites",
+  "main": "dist-electron/main.cjs",
+  "author": "Virtual Names Privacy Suite",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "dev:vite": "vite",
+    "build:vite": "tsc && vite build",
+    "build:electron": "esbuild electron/main.ts electron/preload.ts --bundle --platform=node --external:electron --outdir=dist-electron --out-extension:.js=.cjs",
+    "build": "npm run build:vite && npm run build:electron",
+    "electron:start": "electron .",
+    "dev": "npm run build:electron && concurrently \"npm run dev:vite\" \"wait-on http://localhost:5173 && electron .\"",
+    "pack:win": "npm run build && electron-builder --win --dir",
+    "dist:win": "npm run build && electron-builder --win portable",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "lucide-react": "^0.460.0",
+    "clsx": "^2.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
+    "autoprefixer": "^10.4.20",
+    "concurrently": "^9.1.0",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "esbuild": "^0.24.0",
+    "postcss": "^8.4.49",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11",
+    "vitest": "^2.1.5",
+    "wait-on": "^8.0.1"
+  },
+  "build": {
+    "appId": "com.virtualnames.privacyapp",
+    "productName": "Virtual Names",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "public/app-icon.ico",
+        "to": "app-icon.ico"
+      },
+      {
+        "from": "public/app-icon.png",
+        "to": "app-icon.png"
+      }
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "signAndEditExecutable": true,
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "portable": {
+      "artifactName": "VirtualNames-v${version}-Portable.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Virtual Names",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "installerHeaderIcon": "build/icon.ico",
+      "artifactName": "VirtualNames-Setup-v${version}.${ext}"
+    }
+  }
+}
